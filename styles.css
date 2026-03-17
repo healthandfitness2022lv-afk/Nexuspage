@@ -1135,7 +1135,7 @@ h3,
 
     .nav-container {
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: center;
     }
 
     .logo-wrapper {
@@ -1154,16 +1154,13 @@ h3,
         content: 'Web, software y automatizacion';
         display: inline-flex;
         align-items: center;
-        min-height: 42px;
-        padding: 8px 14px;
-        border-radius: 999px;
-        border: 1px solid rgba(var(--primary-rgb), 0.28);
-        background: rgba(8, 12, 24, 0.38);
+        min-height: 24px;
+        padding: 0;
         color: var(--primary-200);
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.08em;
-        line-height: 1.25;
+        line-height: 1;
         text-transform: uppercase;
     }
 
@@ -1253,6 +1250,8 @@ h3,
 
     .mobile-menu-toggle {
         display: flex;
+        justify-content: center;
+        height: 24px;
     }
 
     .projects-grid {
@@ -1374,8 +1373,8 @@ h3,
     }
 
     .logo-wrapper::after {
-        min-height: 38px;
-        padding: 8px 12px;
+        min-height: 24px;
+        padding: 0;
         font-size: 10px;
     }
 
