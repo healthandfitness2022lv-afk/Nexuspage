@@ -350,29 +350,6 @@ h3,
     padding: 60px 0;
 }
 
-.logo-strip {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 40px;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-}
-
-.logo-strip:hover {
-    opacity: 1;
-}
-
-.client-stat {
-    text-align: center;
-    padding: 20px;
-    transition: transform 0.3s ease;
-}
-
-.client-stat:hover {
-    transform: translateY(-5px);
-}
 
 .trust-grid {
     display: grid;
@@ -409,25 +386,6 @@ h3,
     font-size: 15px;
 }
 
-.stat-number {
-    font-size: 42px;
-    font-weight: 800;
-    background: linear-gradient(135deg, #fff 0%, var(--primary-300) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: block;
-    line-height: 1;
-    margin-bottom: 8px;
-}
-
-.stat-label {
-    font-size: 12px;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    font-weight: 600;
-}
 
 /* --- SERVICES (FLIP CARDS) --- */
 
@@ -633,13 +591,6 @@ h3,
     text-transform: uppercase;
 }
 
-/* --- TESTIMONIALS --- */
-
-.testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 32px;
-}
 
 .problems-grid {
     display: grid;
@@ -662,53 +613,6 @@ h3,
     font-size: 16px;
 }
 
-.testimonial-card {
-    display: flex;
-    flex-direction: column;
-}
-
-.testimonial-quote {
-    color: var(--text-secondary);
-    font-size: 18px;
-    font-style: italic;
-    margin-bottom: 32px;
-    position: relative;
-}
-
-.testimonial-quote::before {
-    content: '“';
-    font-size: 80px;
-    color: var(--primary-500);
-    position: absolute;
-    top: -40px;
-    left: -20px;
-    opacity: 0.2;
-}
-
-.testimonial-author {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-top: auto;
-}
-
-.author-image {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 2px solid var(--primary-500);
-    object-fit: cover;
-}
-
-.author-name {
-    font-weight: 700;
-    color: #fff;
-}
-
-.author-role {
-    font-size: 14px;
-    color: var(--text-tertiary);
-}
 
 /* --- ABOUT SECTION --- */
 
@@ -946,30 +850,6 @@ h3,
     color: var(--primary-400);
 }
 
-.social-links {
-    display: flex;
-    gap: 20px;
-    margin-top: 32px;
-}
-
-.social-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 20px;
-}
-
-.social-icon:hover {
-    background: var(--primary-600);
-    transform: translateY(-4px);
-}
 
 .footer-bottom {
     padding-top: 40px;

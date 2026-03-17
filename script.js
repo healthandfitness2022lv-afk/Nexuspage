@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavbar();
     initParticles();
     initScrollAnimations();
-    initCounters();
     initMobileMenu();
     initFlipCards();
 });
@@ -87,56 +86,6 @@ function initScrollAnimations() {
 
     const animateElements = document.querySelectorAll('.animate-on-scroll');
     animateElements.forEach(el => observer.observe(el));
-}
-
-/**
- * Statistics Incremental Counter
- */
-function initCounters() {
-    const stats = document.querySelectorAll('.stat-number');
-
-    const countObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
-                const target = parseInt(entry.target.getAttribute('data-target'));
-                animateCount(entry.target, target);
-                entry.target.classList.add('counted');
-            }
-        });
-    }, { threshold: 0.5 });
-
-    stats.forEach(stat => countObserver.observe(stat));
-}
-
-function animateCount(element, target) {
-    let current = 0;
-    const duration = 2000;
-    const increment = target / (duration / 16);
-    const label = element.nextElementSibling.textContent.toLowerCase();
-
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            let suffix = '';
-            const lowerLabel = label.toLowerCase();
-
-            if (lowerLabel.includes('%') ||
-                lowerLabel.includes('pasión') ||
-                lowerLabel.includes('visión') ||
-                lowerLabel.includes('estratégica')) {
-                suffix = '%';
-            }
-
-            if (lowerLabel.includes('soporte')) {
-                suffix = ' d/a'; // Días al año
-            }
-
-            element.textContent = Math.round(target) + suffix;
-            clearInterval(timer);
-        } else {
-            element.textContent = Math.round(current);
-        }
-    }, 16);
 }
 
 /**
