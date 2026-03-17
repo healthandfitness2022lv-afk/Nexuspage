@@ -1152,7 +1152,7 @@ h3,
     }
 
     .logo-wrapper::after {
-        content: 'Web, software y automatizacion';
+        content: 'Web, software y automatización';
         display: inline-flex;
         align-items: center;
         min-height: 24px;
