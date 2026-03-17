@@ -1129,16 +1129,42 @@ h3,
 
     .navbar {
         padding: 14px 0;
-        background: rgba(0, 0, 0, 0.48);
-        backdrop-filter: blur(18px);
+        background: transparent;
+        backdrop-filter: none;
     }
 
     .nav-container {
-        justify-content: flex-end;
+        justify-content: space-between;
+        align-items: flex-start;
     }
 
     .logo-wrapper {
+        display: flex;
+        align-items: center;
+        max-width: calc(100% - 72px);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .logo-wrapper img {
         display: none;
+    }
+
+    .logo-wrapper::after {
+        content: 'Web, software y automatizacion';
+        display: inline-flex;
+        align-items: center;
+        min-height: 42px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(var(--primary-rgb), 0.28);
+        background: rgba(8, 12, 24, 0.38);
+        color: var(--primary-200);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        line-height: 1.25;
+        text-transform: uppercase;
     }
 
     .hero {
@@ -1154,8 +1180,8 @@ h3,
     }
 
     .hero-title {
-        font-size: clamp(2.8rem, 12vw, 4rem);
-        line-height: 1.02;
+        font-size: clamp(2.3rem, 10.2vw, 3.25rem);
+        line-height: 1.04;
         letter-spacing: -0.04em;
         margin-bottom: 20px;
     }
@@ -1189,11 +1215,7 @@ h3,
     }
 
     .label-premium {
-        font-size: 11px;
-        letter-spacing: 0.08em;
-        line-height: 1.4;
-        justify-content: center;
-        text-align: center;
+        display: none;
     }
 
     .section-title {
@@ -1254,6 +1276,11 @@ h3,
     .problem-title,
     .process-title {
         font-size: 22px;
+    }
+
+    .process-text {
+        text-align: justify;
+        text-wrap: pretty;
     }
 
     .about-image-wrapper img {
@@ -1338,9 +1365,18 @@ h3,
         padding: 12px 0;
     }
 
-    .logo-wrapper img,
     .footer-logo img {
         height: 36px;
+    }
+
+    .logo-wrapper {
+        max-width: calc(100% - 60px);
+    }
+
+    .logo-wrapper::after {
+        min-height: 38px;
+        padding: 8px 12px;
+        font-size: 10px;
     }
 
     .hero {
@@ -1349,7 +1385,7 @@ h3,
     }
 
     .hero-title {
-        font-size: clamp(2.45rem, 14vw, 3.4rem);
+        font-size: clamp(2.05rem, 11vw, 2.9rem);
     }
 
     .hero-subtitle {
