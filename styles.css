@@ -1056,11 +1056,79 @@ h3,
 
 @media (max-width: 768px) {
     .section-padding {
-        padding: 80px 0;
+        padding: 72px 0;
+    }
+
+    .container {
+        padding: 0 20px;
+    }
+
+    .hero {
+        min-height: auto;
+        height: auto;
+        padding-top: 128px;
+        padding-bottom: 72px;
+    }
+
+    .hero-grid,
+    .about-grid {
+        gap: 40px;
     }
 
     .hero-title {
-        font-size: 48px;
+        font-size: clamp(2.8rem, 12vw, 4rem);
+        line-height: 1.02;
+        letter-spacing: -0.04em;
+        margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+        font-size: 17px;
+        line-height: 1.6;
+        margin-bottom: 28px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .hero-actions .btn-primary,
+    .hero-actions .btn-outline {
+        width: 100%;
+        text-align: center;
+    }
+
+    .hero-highlights {
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .hero-highlights span {
+        width: 100%;
+        text-align: center;
+    }
+
+    .label-premium {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        line-height: 1.4;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .section-title {
+        font-size: 34px;
+        line-height: 1.1;
+    }
+
+    .section-desc {
+        font-size: 16px;
+    }
+
+    .glass-card {
+        padding: 24px;
     }
 
     .nav-links {
@@ -1082,6 +1150,30 @@ h3,
         grid-template-columns: 1fr;
     }
 
+    .trust-card,
+    .problem-card,
+    .process-step {
+        min-height: auto;
+    }
+
+    .trust-title,
+    .problem-title,
+    .process-title {
+        font-size: 22px;
+    }
+
+    .about-image-wrapper img {
+        border-radius: 28px;
+    }
+
+    .experience-badge {
+        position: static;
+        margin-top: 18px;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .footer-grid {
         grid-template-columns: 1fr;
         gap: 40px;
@@ -1094,10 +1186,109 @@ h3,
     }
 
     .service-card-flip {
-        height: 520px;
+        height: 440px;
+    }
+
+    .service-card-back {
+        padding: 32px 24px;
+    }
+
+    .service-title-front {
+        font-size: 24px;
+    }
+
+    .service-title-back {
+        font-size: 22px;
+    }
+
+    .service-description {
+        font-size: 15px;
+        margin-bottom: 24px;
     }
 
     .contact-card strong {
         font-size: 20px;
+    }
+
+    .contact-card {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .navbar {
+        padding: 18px 0;
+    }
+
+    .logo-wrapper img,
+    .footer-logo img {
+        height: 36px;
+    }
+
+    .hero {
+        padding-top: 112px;
+        padding-bottom: 56px;
+    }
+
+    .hero-title {
+        font-size: clamp(2.45rem, 14vw, 3.4rem);
+    }
+
+    .hero-subtitle {
+        font-size: 15px;
+    }
+
+    .btn-primary,
+    .btn-outline {
+        padding: 14px 20px;
+        font-size: 15px;
+    }
+
+    .section-padding {
+        padding: 60px 0;
+    }
+
+    .section-header {
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-size: 30px;
+    }
+
+    .service-card-flip {
+        height: 400px;
+    }
+
+    .service-overlay {
+        padding: 28px 22px;
+    }
+
+    .service-title-front {
+        font-size: 22px;
+    }
+
+    .feature-tag {
+        font-size: 11px;
+    }
+
+    .exp-number {
+        font-size: 40px;
+    }
+
+    .exp-label {
+        font-size: 10px;
+    }
+
+    .contact-card strong {
+        font-size: 18px;
+    }
+
+    .footer {
+        padding: 72px 0 40px;
     }
 }
