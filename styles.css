@@ -385,6 +385,14 @@ h3,
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background: linear-gradient(160deg,
+            rgba(var(--primary-rgb), 0.16) 0%,
+            rgba(9, 9, 11, 0.82) 55%,
+            rgba(var(--primary-rgb), 0.12) 100%);
+    border-color: rgba(var(--primary-rgb), 0.28);
+    box-shadow:
+        0 18px 44px -28px rgba(var(--primary-rgb), 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .trust-title {
@@ -577,6 +585,26 @@ h3,
     background: radial-gradient(circle, rgba(var(--secondary-rgb), 0.05) 0%, transparent 70%);
 }
 
+.process-section {
+    background:
+        radial-gradient(circle at top left, rgba(var(--primary-rgb), 0.12) 0%, transparent 38%),
+        linear-gradient(180deg, rgba(5, 10, 24, 0.98) 0%, rgba(9, 9, 11, 1) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.process-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(var(--primary-rgb), 0.08) 0, rgba(var(--primary-rgb), 0.08) 1px, transparent 1px, transparent 100%),
+        linear-gradient(rgba(var(--primary-rgb), 0.05) 0, rgba(var(--primary-rgb), 0.05) 1px, transparent 1px, transparent 100%);
+    background-size: 36px 36px;
+    opacity: 0.2;
+    pointer-events: none;
+}
+
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -691,6 +719,16 @@ h3,
     align-items: center;
 }
 
+.about-copy {
+    text-align: left;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+.about-copy-last {
+    margin-bottom: 32px;
+}
+
 .about-image-wrapper {
     position: relative;
 }
@@ -761,6 +799,22 @@ h3,
 
 .process-step {
     min-height: 260px;
+    background: linear-gradient(180deg,
+            rgba(10, 16, 34, 0.96) 0%,
+            rgba(var(--primary-rgb), 0.16) 100%);
+    border-color: rgba(var(--primary-rgb), 0.32);
+    position: relative;
+    overflow: hidden;
+}
+
+.process-step::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(180deg, var(--primary-300) 0%, var(--secondary-500) 100%);
 }
 
 .process-number {
@@ -806,6 +860,16 @@ h3,
     transform: translateY(-4px);
     border-color: rgba(var(--primary-rgb), 0.45);
     background: rgba(var(--primary-rgb), 0.1);
+}
+
+.contact-card-static:hover {
+    transform: none;
+}
+
+.contact-icon {
+    font-size: 28px;
+    color: var(--primary-300);
+    margin-bottom: 4px;
 }
 
 .contact-label {
@@ -1063,10 +1127,24 @@ h3,
         padding: 0 20px;
     }
 
+    .navbar {
+        padding: 14px 0;
+        background: rgba(0, 0, 0, 0.48);
+        backdrop-filter: blur(18px);
+    }
+
+    .nav-container {
+        justify-content: flex-end;
+    }
+
+    .logo-wrapper {
+        display: none;
+    }
+
     .hero {
         min-height: auto;
         height: auto;
-        padding-top: 128px;
+        padding-top: 108px;
         padding-bottom: 72px;
     }
 
@@ -1131,8 +1209,24 @@ h3,
         padding: 24px;
     }
 
+    .trust-card,
+    .problem-card {
+        background: linear-gradient(160deg,
+                rgba(var(--primary-rgb), 0.22) 0%,
+                rgba(8, 12, 24, 0.92) 55%,
+                rgba(var(--primary-rgb), 0.14) 100%);
+        border-color: rgba(var(--primary-rgb), 0.38);
+        box-shadow:
+            0 20px 40px -30px rgba(var(--primary-rgb), 0.75),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
     .nav-links {
         display: none;
+        gap: 18px;
+        border: 1px solid rgba(var(--primary-rgb), 0.18);
+        border-radius: 18px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
     }
 
     .mobile-menu-toggle {
@@ -1164,6 +1258,26 @@ h3,
 
     .about-image-wrapper img {
         border-radius: 28px;
+    }
+
+    .about-content {
+        text-align: left;
+    }
+
+    .about-content .label-premium {
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .about-content .section-title {
+        margin-bottom: 18px;
+    }
+
+    .about-copy {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(var(--primary-rgb), 0.14);
+        border-radius: 18px;
+        padding: 18px 18px 16px;
     }
 
     .experience-badge {
@@ -1221,7 +1335,7 @@ h3,
     }
 
     .navbar {
-        padding: 18px 0;
+        padding: 12px 0;
     }
 
     .logo-wrapper img,
@@ -1230,7 +1344,7 @@ h3,
     }
 
     .hero {
-        padding-top: 112px;
+        padding-top: 96px;
         padding-bottom: 56px;
     }
 

@@ -152,18 +152,20 @@ function initMobileMenu() {
             if (navLinks.style.display === 'flex') {
                 navLinks.style.flexDirection = 'column';
                 navLinks.style.position = 'absolute';
-                navLinks.style.top = '100%';
-                navLinks.style.left = '0';
-                navLinks.style.width = '100%';
-                navLinks.style.background = 'rgba(0,0,0,0.95)';
-                navLinks.style.padding = '40px';
+                navLinks.style.top = 'calc(100% + 12px)';
+                navLinks.style.left = '20px';
+                navLinks.style.right = '20px';
+                navLinks.style.width = 'auto';
+                navLinks.style.background = 'rgba(5, 8, 18, 0.96)';
+                navLinks.style.padding = '24px';
                 navLinks.style.backdropFilter = 'blur(20px)';
+                navLinks.style.borderRadius = '18px';
             }
         });
     }
 
     // Close on link click
-    const links = document.querySelectorAll('.nav-link');
+    const links = document.querySelectorAll('.nav-links a');
     links.forEach(link => {
         link.addEventListener('click', () => {
             if (window.innerWidth < 768) {
