@@ -1036,12 +1036,33 @@
 
   <!-- SUBMIT -->
   <div class="submit-section">
-    <p>Al enviar este formulario, recibirás una confirmación y nos pondremos en contacto contigo para continuar.</p>
-    <button class="submit-btn" onclick="submitForm()">
+    <p>Al enviar este formulario me llegará directamente y me pondré en contacto contigo pronto.</p>
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">
       Enviar cuestionario
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
+    <p id="submit-error" style="display:none;color:#E24B4A;font-size:13px;margin-top:12px;"></p>
   </div>
+
+  <!-- Netlify Forms hidden form (necesario para detección en build) -->
+  <form name="cuestionario-diseno" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input name="bot-field" />
+    <input name="negocio" />
+    <input name="descripcion" />
+    <input name="publico" />
+    <input name="tipo-pagina" />
+    <input name="estilo-visual" />
+    <input name="paleta" />
+    <input name="colores-marca" />
+    <input name="secciones" />
+    <input name="referencias" />
+    <input name="notas-referencias" />
+    <input name="notas-imagenes" />
+    <input name="plazo" />
+    <input name="presupuesto" />
+    <input name="comentarios" />
+    <input name="imagenes" type="file" multiple />
+  </form>
 </div>
 
 <!-- SUCCESS -->
@@ -1214,67 +1235,110 @@
   document.getElementById('biz-name').addEventListener('input', updateProgress);
   document.getElementById('biz-desc').addEventListener('input', updateProgress);
 
-  // SUBMIT
+  // SUBMIT via Netlify Forms (fetch/AJAX)
   function getSelected(groupId) {
     return Array.from(document.querySelectorAll('#' + groupId + ' .pill.selected')).map(p => p.textContent).join(', ');
   }
 
-  function submitForm() {
+  async function submitForm() {
     const name = document.getElementById('biz-name').value.trim();
     if (!name) { alert('Por favor ingresa el nombre de tu negocio.'); return; }
 
+    const btn = document.getElementById('submit-btn');
+    const errEl = document.getElementById('submit-error');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+    errEl.style.display = 'none';
+
     const refs = Array.from(document.querySelectorAll('#ref-list input')).map(i => i.value.trim()).filter(Boolean);
 
-    const data = {
-      'Negocio': name,
-      'Descripción': document.getElementById('biz-desc').value.trim() || '—',
-      'Público objetivo': document.getElementById('biz-audience').value.trim() || '—',
-      'Tipo de página': getSelected('page-type') || '—',
-      'Estilo visual': Array.from(document.querySelectorAll('.style-card.selected')).map(c => c.querySelector('.style-name').textContent).join(', ') || '—',
-      'Paleta de color': document.querySelector('.palette-option.selected')?.querySelector('.palette-label')?.textContent || '—',
-      'Colores de marca': document.getElementById('custom-colors').value.trim() || '—',
-      'Secciones': getSelected('sections-group') || '—',
-      'Referencias': refs.length ? refs.join(' | ') : '—',
-      'Notas de referencia': document.getElementById('ref-notes').value.trim() || '—',
-      'Plazo': getSelected('timeline-group') || '—',
-      'Presupuesto': getSelected('budget-group') || '—',
-      'Imágenes subidas': uploadedFiles.length ? uploadedFiles.map(f => f.name).join(', ') : '—',
-      'Notas sobre imágenes': document.getElementById('img-notes').value.trim() || '—',
-      'Comentarios extra': document.getElementById('extras').value.trim() || '—',
-    };
+    const formData = new FormData();
+    formData.append('form-name', 'cuestionario-diseno');
+    formData.append('bot-field', '');
+    formData.append('negocio', name);
+    formData.append('descripcion', document.getElementById('biz-desc').value.trim());
+    formData.append('publico', document.getElementById('biz-audience').value.trim());
+    formData.append('tipo-pagina', getSelected('page-type'));
+    formData.append('estilo-visual', Array.from(document.querySelectorAll('.style-card.selected')).map(c => c.querySelector('.style-name').textContent).join(', '));
+    formData.append('paleta', document.querySelector('.palette-option.selected')?.querySelector('.palette-label')?.textContent || '');
+    formData.append('colores-marca', document.getElementById('custom-colors').value.trim());
+    formData.append('secciones', getSelected('sections-group'));
+    formData.append('referencias', refs.join(' | '));
+    formData.append('notas-referencias', document.getElementById('ref-notes').value.trim());
+    formData.append('plazo', getSelected('timeline-group'));
+    formData.append('presupuesto', getSelected('budget-group'));
+    formData.append('notas-imagenes', document.getElementById('img-notes').value.trim());
+    formData.append('comentarios', document.getElementById('extras').value.trim());
 
-    const lines = document.getElementById('result-lines');
-    lines.innerHTML = '';
-    for (const [k, v] of Object.entries(data)) {
-      const div = document.createElement('div');
-      div.className = 'result-line';
-      div.innerHTML = `<span class="rl">${k}</span><span class="rv">${v}</span>`;
-      lines.appendChild(div);
-    }
+    // Adjuntar imágenes
+    uploadedFiles.forEach((file, i) => {
+      formData.append(`imagen-${i + 1}`, file, file.name);
+    });
 
-    document.getElementById('main-form').style.display = 'none';
-    document.getElementById('success-screen').classList.add('visible');
-
-    // Show image thumbnails in success screen
-    if (uploadedFiles.length > 0) {
-      const imgGrid = document.createElement('div');
-      imgGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:16px;';
-      uploadedFiles.forEach(file => {
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.08);';
-            imgGrid.appendChild(img);
-          };
-          reader.readAsDataURL(file);
-        }
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        body: formData,
       });
-      document.getElementById('result-card').appendChild(imgGrid);
-    }
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (!res.ok) throw new Error('Error al enviar');
+
+      // Mostrar pantalla de éxito
+      const data = {
+        'Negocio': name,
+        'Descripción': document.getElementById('biz-desc').value.trim() || '—',
+        'Público objetivo': document.getElementById('biz-audience').value.trim() || '—',
+        'Tipo de página': getSelected('page-type') || '—',
+        'Estilo visual': Array.from(document.querySelectorAll('.style-card.selected')).map(c => c.querySelector('.style-name').textContent).join(', ') || '—',
+        'Paleta de color': document.querySelector('.palette-option.selected')?.querySelector('.palette-label')?.textContent || '—',
+        'Colores de marca': document.getElementById('custom-colors').value.trim() || '—',
+        'Secciones': getSelected('sections-group') || '—',
+        'Referencias': refs.length ? refs.join(' | ') : '—',
+        'Notas de referencia': document.getElementById('ref-notes').value.trim() || '—',
+        'Plazo': getSelected('timeline-group') || '—',
+        'Presupuesto': getSelected('budget-group') || '—',
+        'Imágenes subidas': uploadedFiles.length ? uploadedFiles.map(f => f.name).join(', ') : '—',
+        'Notas sobre imágenes': document.getElementById('img-notes').value.trim() || '—',
+        'Comentarios extra': document.getElementById('extras').value.trim() || '—',
+      };
+
+      const lines = document.getElementById('result-lines');
+      lines.innerHTML = '';
+      for (const [k, v] of Object.entries(data)) {
+        const div = document.createElement('div');
+        div.className = 'result-line';
+        div.innerHTML = `<span class="rl">${k}</span><span class="rv">${v}</span>`;
+        lines.appendChild(div);
+      }
+
+      if (uploadedFiles.length > 0) {
+        const imgGrid = document.createElement('div');
+        imgGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:16px;';
+        uploadedFiles.forEach(file => {
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = document.createElement('img');
+              img.src = e.target.result;
+              img.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.08);';
+              imgGrid.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+        document.getElementById('result-card').appendChild(imgGrid);
+      }
+
+      document.getElementById('main-form').style.display = 'none';
+      document.getElementById('success-screen').classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      btn.innerHTML = 'Enviar cuestionario <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      btn.disabled = false;
+      errEl.textContent = 'Hubo un problema al enviar. Verifica tu conexión e intenta de nuevo.';
+      errEl.style.display = 'block';
+    }
   }
 
   function copyResult() {
@@ -1285,10 +1349,36 @@
       const val = l.querySelector('.rv').textContent;
       text += `${label}: ${val}\n`;
     });
-    navigator.clipboard.writeText(text).catch(() => {});
+
     const btn = document.querySelector('.copy-result-btn');
-    btn.textContent = '¡Copiado!';
-    setTimeout(() => btn.textContent = 'Copiar resumen', 2000);
+
+    // Método 1: clipboard API moderna
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '¡Copiado!';
+        setTimeout(() => btn.textContent = 'Copiar resumen', 2000);
+      }).catch(() => fallbackCopy(text, btn));
+    } else {
+      fallbackCopy(text, btn);
+    }
+  }
+
+  function fallbackCopy(text, btn) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
+      btn.textContent = '¡Copiado!';
+      setTimeout(() => btn.textContent = 'Copiar resumen', 2000);
+    } catch (e) {
+      btn.textContent = 'Error al copiar';
+      setTimeout(() => btn.textContent = 'Copiar resumen', 2000);
+    }
+    document.body.removeChild(ta);
   }
 </script>
 </body>
