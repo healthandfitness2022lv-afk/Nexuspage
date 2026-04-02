@@ -1034,6 +1034,26 @@
     </div>
   </div>
 
+  <!-- 09 CONTACTO -->
+  <div class="section" id="sec-9">
+    <div class="section-num">09 — Tus datos de contacto</div>
+    <div class="section-title">¿Cómo me comunico contigo?</div>
+    <div class="section-desc">Para poder enviarte una propuesta y coordinar el proyecto.</div>
+
+    <div class="field">
+      <label>Nombre <span class="required-mark">*</span></label>
+      <input type="text" id="contact-name" placeholder="Tu nombre completo..." />
+    </div>
+    <div class="field">
+      <label>Correo electrónico <span class="required-mark">*</span></label>
+      <input type="email" id="contact-email" placeholder="tu@correo.com" />
+    </div>
+    <div class="field">
+      <label>Teléfono / WhatsApp <span class="required-mark">*</span></label>
+      <input type="tel" id="contact-phone" placeholder="+56 9 1234 5678" />
+    </div>
+  </div>
+
   <!-- SUBMIT -->
   <div class="submit-section">
     <p>Al enviar este formulario me llegará directamente y me pondré en contacto contigo pronto.</p>
@@ -1047,6 +1067,9 @@
   <!-- Netlify Forms hidden form (necesario para detección en build) -->
   <form name="cuestionario-diseno" data-netlify="true" netlify-honeypot="bot-field" hidden>
     <input name="bot-field" />
+    <input name="nombre-contacto" />
+    <input name="email-contacto" />
+    <input name="telefono-contacto" />
     <input name="negocio" />
     <input name="descripcion" />
     <input name="publico" />
@@ -1243,6 +1266,12 @@
   async function submitForm() {
     const name = document.getElementById('biz-name').value.trim();
     if (!name) { alert('Por favor ingresa el nombre de tu negocio.'); return; }
+    const contactName = document.getElementById('contact-name').value.trim();
+    if (!contactName) { alert('Por favor ingresa tu nombre.'); document.getElementById('contact-name').focus(); return; }
+    const contactEmail = document.getElementById('contact-email').value.trim();
+    if (!contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) { alert('Por favor ingresa un correo electrónico válido.'); document.getElementById('contact-email').focus(); return; }
+    const contactPhone = document.getElementById('contact-phone').value.trim();
+    if (!contactPhone) { alert('Por favor ingresa tu teléfono o WhatsApp.'); document.getElementById('contact-phone').focus(); return; }
 
     const btn = document.getElementById('submit-btn');
     const errEl = document.getElementById('submit-error');
@@ -1255,6 +1284,9 @@
     const formData = new FormData();
     formData.append('form-name', 'cuestionario-diseno');
     formData.append('bot-field', '');
+    formData.append('nombre-contacto', contactName);
+    formData.append('email-contacto', contactEmail);
+    formData.append('telefono-contacto', contactPhone);
     formData.append('negocio', name);
     formData.append('descripcion', document.getElementById('biz-desc').value.trim());
     formData.append('publico', document.getElementById('biz-audience').value.trim());
@@ -1285,6 +1317,9 @@
 
       // Mostrar pantalla de éxito
       const data = {
+        'Nombre': contactName,
+        'Correo': contactEmail,
+        'Teléfono': contactPhone,
         'Negocio': name,
         'Descripción': document.getElementById('biz-desc').value.trim() || '—',
         'Público objetivo': document.getElementById('biz-audience').value.trim() || '—',
