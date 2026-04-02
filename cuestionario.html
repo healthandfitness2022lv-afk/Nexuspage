@@ -1034,26 +1034,6 @@
     </div>
   </div>
 
-  <!-- 09 CONTACTO -->
-  <div class="section" id="sec-9">
-    <div class="section-num">09 — Tus datos de contacto</div>
-    <div class="section-title">¿Cómo me comunico contigo?</div>
-    <div class="section-desc">Para poder enviarte una propuesta y coordinar el proyecto.</div>
-
-    <div class="field">
-      <label>Nombre <span class="required-mark">*</span></label>
-      <input type="text" id="contact-name" placeholder="Tu nombre completo..." />
-    </div>
-    <div class="field">
-      <label>Correo electrónico <span class="required-mark">*</span></label>
-      <input type="email" id="contact-email" placeholder="tu@correo.com" />
-    </div>
-    <div class="field">
-      <label>Teléfono / WhatsApp <span class="required-mark">*</span></label>
-      <input type="tel" id="contact-phone" placeholder="+56 9 1234 5678" />
-    </div>
-  </div>
-
   <!-- SUBMIT -->
   <div class="submit-section">
     <p>Al enviar este formulario me llegará directamente y me pondré en contacto contigo pronto.</p>
@@ -1067,9 +1047,6 @@
   <!-- Netlify Forms hidden form (necesario para detección en build) -->
   <form name="cuestionario-diseno" data-netlify="true" netlify-honeypot="bot-field" hidden>
     <input name="bot-field" />
-    <input name="nombre-contacto" />
-    <input name="email-contacto" />
-    <input name="telefono-contacto" />
     <input name="negocio" />
     <input name="descripcion" />
     <input name="publico" />
@@ -1258,35 +1235,56 @@
   document.getElementById('biz-name').addEventListener('input', updateProgress);
   document.getElementById('biz-desc').addEventListener('input', updateProgress);
 
-  // SUBMIT via Netlify Forms (fetch/AJAX)
+  // CLOUDINARY + NETLIFY FORMS
+  const CLOUDINARY_CLOUD = 'df5orznyj';
+  const CLOUDINARY_PRESET = 'cuestionario';
+
   function getSelected(groupId) {
     return Array.from(document.querySelectorAll('#' + groupId + ' .pill.selected')).map(p => p.textContent).join(', ');
+  }
+
+  async function uploadToCloudinary(file) {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_PRESET);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`, {
+      method: 'POST', body: fd
+    });
+    if (!res.ok) throw new Error(`Error subiendo ${file.name}`);
+    const json = await res.json();
+    return json.secure_url;
   }
 
   async function submitForm() {
     const name = document.getElementById('biz-name').value.trim();
     if (!name) { alert('Por favor ingresa el nombre de tu negocio.'); return; }
-    const contactName = document.getElementById('contact-name').value.trim();
-    if (!contactName) { alert('Por favor ingresa tu nombre.'); document.getElementById('contact-name').focus(); return; }
-    const contactEmail = document.getElementById('contact-email').value.trim();
-    if (!contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) { alert('Por favor ingresa un correo electrónico válido.'); document.getElementById('contact-email').focus(); return; }
-    const contactPhone = document.getElementById('contact-phone').value.trim();
-    if (!contactPhone) { alert('Por favor ingresa tu teléfono o WhatsApp.'); document.getElementById('contact-phone').focus(); return; }
 
     const btn = document.getElementById('submit-btn');
     const errEl = document.getElementById('submit-error');
-    btn.textContent = 'Enviando...';
     btn.disabled = true;
     errEl.style.display = 'none';
 
     const refs = Array.from(document.querySelectorAll('#ref-list input')).map(i => i.value.trim()).filter(Boolean);
 
+    // 1. Subir imágenes a Cloudinary
+    const imageUrls = [];
+    if (uploadedFiles.length > 0) {
+      for (let i = 0; i < uploadedFiles.length; i++) {
+        btn.innerHTML = `Subiendo imágenes (${i + 1}/${uploadedFiles.length})...`;
+        try {
+          const url = await uploadToCloudinary(uploadedFiles[i]);
+          imageUrls.push(`${uploadedFiles[i].name}: ${url}`);
+        } catch (e) {
+          imageUrls.push(`${uploadedFiles[i].name}: (error al subir)`);
+        }
+      }
+    }
+
+    // 2. Enviar todo a Netlify Forms
+    btn.innerHTML = 'Enviando respuestas...';
     const formData = new FormData();
     formData.append('form-name', 'cuestionario-diseno');
     formData.append('bot-field', '');
-    formData.append('nombre-contacto', contactName);
-    formData.append('email-contacto', contactEmail);
-    formData.append('telefono-contacto', contactPhone);
     formData.append('negocio', name);
     formData.append('descripcion', document.getElementById('biz-desc').value.trim());
     formData.append('publico', document.getElementById('biz-audience').value.trim());
@@ -1299,27 +1297,16 @@
     formData.append('notas-referencias', document.getElementById('ref-notes').value.trim());
     formData.append('plazo', getSelected('timeline-group'));
     formData.append('presupuesto', getSelected('budget-group'));
+    formData.append('imagenes', imageUrls.length ? imageUrls.join('\n') : '(sin imágenes)');
     formData.append('notas-imagenes', document.getElementById('img-notes').value.trim());
     formData.append('comentarios', document.getElementById('extras').value.trim());
 
-    // Adjuntar imágenes
-    uploadedFiles.forEach((file, i) => {
-      formData.append(`imagen-${i + 1}`, file, file.name);
-    });
-
     try {
-      const res = await fetch('/', {
-        method: 'POST',
-        body: formData,
-      });
-
+      const res = await fetch('/', { method: 'POST', body: formData });
       if (!res.ok) throw new Error('Error al enviar');
 
-      // Mostrar pantalla de éxito
+      // 3. Pantalla de éxito
       const data = {
-        'Nombre': contactName,
-        'Correo': contactEmail,
-        'Teléfono': contactPhone,
         'Negocio': name,
         'Descripción': document.getElementById('biz-desc').value.trim() || '—',
         'Público objetivo': document.getElementById('biz-audience').value.trim() || '—',
@@ -1332,7 +1319,7 @@
         'Notas de referencia': document.getElementById('ref-notes').value.trim() || '—',
         'Plazo': getSelected('timeline-group') || '—',
         'Presupuesto': getSelected('budget-group') || '—',
-        'Imágenes subidas': uploadedFiles.length ? uploadedFiles.map(f => f.name).join(', ') : '—',
+        'Imágenes': imageUrls.length ? imageUrls.join('\n') : '—',
         'Notas sobre imágenes': document.getElementById('img-notes').value.trim() || '—',
         'Comentarios extra': document.getElementById('extras').value.trim() || '—',
       };
@@ -1346,19 +1333,17 @@
         lines.appendChild(div);
       }
 
-      if (uploadedFiles.length > 0) {
+      // Miniaturas desde Cloudinary URLs
+      if (imageUrls.length > 0) {
         const imgGrid = document.createElement('div');
         imgGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:16px;';
-        uploadedFiles.forEach(file => {
-          if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const img = document.createElement('img');
-              img.src = e.target.result;
-              img.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.08);';
-              imgGrid.appendChild(img);
-            };
-            reader.readAsDataURL(file);
+        imageUrls.forEach(entry => {
+          const url = entry.split(': ')[1];
+          if (url && url.startsWith('http')) {
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.08);';
+            imgGrid.appendChild(img);
           }
         });
         document.getElementById('result-card').appendChild(imgGrid);
