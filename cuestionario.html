@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuestionario de Diseño Web</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0D0D0D;
+    --surface: #161616;
+    --surface2: #1E1E1E;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.18);
+    --accent: #C8F135;
+    --accent-dim: rgba(200,241,53,0.12);
+    --text: #F0EDE6;
+    --text-muted: #888;
+    --text-dim: #555;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
+
+  /* HEADER */
+  .header {
+    padding: 60px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .header-tag {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .header h1 span { color: var(--accent); }
+
+  .header p {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,13,13,0.9);
+    backdrop-filter: blur(12px);
+    padding: 12px 0;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .progress-inner { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .progress-bar-bg {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 52px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+  .section:nth-child(6) { animation-delay: 0.3s; }
+  .section:nth-child(7) { animation-delay: 0.35s; }
+
+  .section-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* TEXT INPUT */
+  .field {
+    margin-bottom: 16px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--text-dim);
+  }
+
+  /* STYLE CARDS (visual selection) */
+  .style-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media (max-width: 520px) {
+    .style-grid { grid-template-columns: 1fr; }
+  }
+
+  .style-card {
+    cursor: pointer;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.15s;
+    position: relative;
+    background: var(--surface);
+  }
+
+  .style-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+  }
+
+  .style-card.selected {
+    border-color: var(--accent);
+  }
+
+  .style-card.selected .check-badge {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .check-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 2;
+  }
+
+  .check-badge svg { width: 13px; height: 13px; }
+
+  .style-preview {
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .style-preview svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .style-info {
+    padding: 12px 14px;
+  }
+
+  .style-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .style-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* PILL OPTIONS */
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill {
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    background: transparent;
+    user-select: none;
+  }
+
+  .pill:hover {
+    border-color: var(--border-hover);
+    color: var(--text);
+  }
+
+  .pill.selected {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* COLOR PALETTE OPTIONS */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .palette-option {
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    padding: 14px;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+  }
+
+  .palette-option:hover { border-color: var(--border-hover); }
+  .palette-option.selected { border-color: var(--accent); }
+
+  .palette-swatches {
+    display: flex;
+    gap: 4px;
+  }
+
+  .swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+
+  .palette-label { font-size: 13px; color: var(--text-muted); }
+  .palette-option.selected .palette-label { color: var(--text); }
+
+  /* REFERENCE LINKS */
+  .ref-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ref-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ref-row input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .ref-row input:focus { border-color: var(--accent); }
+  .ref-row input::placeholder { color: var(--text-dim); }
+
+  .add-ref-btn {
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 4px;
+  }
+
+  .add-ref-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* RANGE SLIDER */
+  .range-wrap { margin-top: 4px; }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .range-value {
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    color: var(--accent);
+    margin-top: 8px;
+  }
+
+  /* SUBMIT */
+  .submit-section {
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .submit-section p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #0D0D0D;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 16px 32px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .submit-btn:hover { background: #d4f54a; transform: translateY(-1px); }
+  .submit-btn:active { transform: scale(0.98); }
+
+  /* SUCCESS STATE */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 80px 0;
+  }
+
+  .success-screen.visible { display: block; }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .success-screen h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .success-screen p {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 400px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    text-align: left;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    word-break: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .result-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .result-card .result-line {
+    border-bottom: 1px solid var(--border);
+    padding: 6px 0;
+    display: flex;
+    gap: 12px;
+  }
+
+  .result-line .rl { color: var(--text-muted); min-width: 160px; flex-shrink: 0; }
+  .result-line .rv { color: var(--text); }
+
+  .copy-result-btn {
+    margin-top: 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .copy-result-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .required-mark { color: var(--accent); margin-left: 2px; }
+
+  .hint { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+
+  /* IMAGE UPLOAD */
+  .upload-zone {
+    border: 1.5px dashed var(--border-hover);
+    border-radius: var(--radius);
+    padding: 36px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+    position: relative;
+  }
+
+  .upload-zone:hover, .upload-zone.dragging {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--surface2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+  }
+
+  .upload-zone p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .upload-zone strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .upload-zone .hint { margin-top: 8px; }
+
+  .img-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .img-thumb {
+    position: relative;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    aspect-ratio: 1;
+    background: var(--surface2);
+  }
+
+  .img-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .img-thumb .img-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.65);
+    font-size: 10px;
+    color: #ccc;
+    padding: 4px 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .img-thumb .remove-img {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0,0,0,0.7);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .img-thumb:hover .remove-img { opacity: 1; }
+
+  .upload-count {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+
+  .upload-count span { color: var(--accent); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-info">
+      <span id="progress-label">Inicio</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="main-form">
+  <div class="header">
+    <div class="header-tag">Cuestionario de diseño</div>
+    <h1>Cuéntame sobre tu <span>proyecto</span></h1>
+    <p>Antes de empezar a diseñar, necesito entender tu negocio y el estilo que buscas. Tómate unos minutos para completar esto.</p>
+  </div>
+
+  <!-- 01 INFO BÁSICA -->
+  <div class="section" id="sec-1">
+    <div class="section-num">01 — Información básica</div>
+    <div class="section-title">¿Quién eres y qué haces?</div>
+    <div class="section-desc">Cuéntame lo esencial sobre tu negocio.</div>
+
+    <div class="field">
+      <label>Nombre de tu negocio o proyecto <span class="required-mark">*</span></label>
+      <input type="text" id="biz-name" placeholder="ej. PlayaNorte, Cabañas del Sur..." />
+    </div>
+    <div class="field">
+      <label>¿A qué se dedica? <span class="required-mark">*</span></label>
+      <textarea id="biz-desc" rows="3" placeholder="Describe brevemente qué ofreces y a quién..."></textarea>
+    </div>
+    <div class="field">
+      <label>¿Cuál es tu público objetivo?</label>
+      <input type="text" id="biz-audience" placeholder="ej. Familias que buscan descanso en la playa, turistas de Santiago..." />
+    </div>
+  </div>
+
+  <!-- 02 TIPO DE PÁGINA -->
+  <div class="section" id="sec-2">
+    <div class="section-num">02 — ¿Qué necesitas?</div>
+    <div class="section-title">Tipo de página</div>
+    <div class="section-desc">Selecciona todo lo que aplique.</div>
+
+    <div class="pill-group" id="page-type">
+      <div class="pill" data-val="landing">Landing page</div>
+      <div class="pill" data-val="catalogo">Catálogo / Portfolio</div>
+      <div class="pill" data-val="reservas">Sistema de reservas</div>
+      <div class="pill" data-val="tienda">Tienda online</div>
+      <div class="pill" data-val="blog">Blog / Noticias</div>
+      <div class="pill" data-val="institucional">Página institucional</div>
+      <div class="pill" data-val="app">App web</div>
+      <div class="pill" data-val="otro-tipo">Otro</div>
+    </div>
+  </div>
+
+  <!-- 03 ESTILO VISUAL -->
+  <div class="section" id="sec-3">
+    <div class="section-num">03 — Estilo visual</div>
+    <div class="section-title">¿Cómo quieres que se vea?</div>
+    <div class="section-desc">Elige el estilo que más representa tu marca. Puedes elegir hasta 2.</div>
+
+    <div class="style-grid" id="style-grid">
+
+      <div class="style-card" data-val="minimalista">
+        <div class="check-badge"><svg viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="style-preview">
+          <svg viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="140" fill="#F9F9F7"/>
+            <rect x="24" y="28" width="80" height="6" rx="3" fill="#1A1A1A"/>
+            <rect x="24" y="42" width="120" height="3" rx="1.5" fill="#D0D0D0"/>
+            <rect x="24" y="52" width="90" height="3" rx="1.5" fill="#D0D0D0"/>
+            <rect x="24" y="80" width="60" height="22" rx="4" fill="#1A1A1A"/>
+            <rect x="180" y="24" width="100" height="90" rx="6" fill="#EBEBEB"/>
+          </svg>
+        </div>
+        <div class="style-info">
+          <div class="style-name">Minimalista</div>
+          <div class="style-desc">Blanco, mucho espacio, tipografía limpia. Menos es más.</div>
+        </div>
+      </div>
+
+      <div class="style-card" data-val="moderno">
+        <div class="check-badge"><svg viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="style-preview">
+          <svg viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="140" fill="#0F0F0F"/>
+            <rect x="0" y="0" width="300" height="140" fill="url(#grad1)"/>
+            <defs>
+              <linearGradient id="grad1" x1="0" y1="0" x2="300" y2="140" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#1a1a2e"/>
+                <stop offset="100%" stop-color="#0f0f0f"/>
+              </linearGradient>
+            </defs>
+            <circle cx="230" cy="50" r="50" fill="#7C3AED" fill-opacity="0.25"/>
+            <rect x="24" y="32" width="100" height="8" rx="4" fill="white"/>
+            <rect x="24" y="48" width="140" height="4" rx="2" fill="rgba(255,255,255,0.3)"/>
+            <rect x="24" y="58" width="110" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
+            <rect x="24" y="82" width="72" height="24" rx="12" fill="#7C3AED"/>
+            <rect x="106" y="82" width="72" height="24" rx="12" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="style-info">
+          <div class="style-name">Moderno / Dark</div>
+          <div class="style-desc">Fondo oscuro, colores vibrantes, sensación premium.</div>
+        </div>
+      </div>
+
+      <div class="style-card" data-val="natural">
+        <div class="check-badge"><svg viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="style-preview">
+          <svg viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="140" fill="#F5F0E8"/>
+            <rect x="0" y="100" width="300" height="40" fill="#D4C5A9"/>
+            <circle cx="220" cy="60" r="45" fill="#8FB87A" fill-opacity="0.5"/>
+            <circle cx="240" cy="75" r="30" fill="#6A9958" fill-opacity="0.4"/>
+            <rect x="24" y="30" width="90" height="7" rx="3.5" fill="#5C4A2A"/>
+            <rect x="24" y="46" width="130" height="4" rx="2" fill="#8C7A5C"/>
+            <rect x="24" y="56" width="100" height="4" rx="2" fill="#8C7A5C"/>
+            <rect x="24" y="80" width="68" height="22" rx="11" fill="#5C4A2A"/>
+          </svg>
+        </div>
+        <div class="style-info">
+          <div class="style-name">Natural / Orgánico</div>
+          <div class="style-desc">Tonos tierra, tipografía cálida. Ideal para turismo y gastronomía.</div>
+        </div>
+      </div>
+
+      <div class="style-card" data-val="bold">
+        <div class="check-badge"><svg viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="style-preview">
+          <svg viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="140" fill="#FF3B00"/>
+            <rect x="0" y="0" width="300" height="70" fill="#FF3B00"/>
+            <rect x="0" y="70" width="300" height="70" fill="#FFEC00"/>
+            <rect x="20" y="18" width="160" height="14" rx="0" fill="#1A1A1A"/>
+            <rect x="20" y="40" width="120" height="8" rx="0" fill="#1A1A1A" fill-opacity="0.4"/>
+            <rect x="20" y="80" width="80" height="28" rx="0" fill="#1A1A1A"/>
+            <rect x="110" y="80" width="80" height="28" rx="0" fill="white" fill-opacity="0.3"/>
+          </svg>
+        </div>
+        <div class="style-info">
+          <div class="style-name">Bold / Impactante</div>
+          <div class="style-desc">Colores fuertes, tipografía gruesa. Llama la atención de inmediato.</div>
+        </div>
+      </div>
+
+      <div class="style-card" data-val="corporativo">
+        <div class="check-badge"><svg viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="style-preview">
+          <svg viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="140" fill="#F4F7FC"/>
+            <rect x="0" y="0" width="300" height="36" fill="#1B3A6B"/>
+            <rect x="16" y="12" width="40" height="12" rx="2" fill="white" fill-opacity="0.9"/>
+            <rect x="160" y="14" width="30" height="8" rx="2" fill="white" fill-opacity="0.5"/>
+            <rect x="196" y="14" width="30" height="8" rx="2" fill="white" fill-opacity="0.5"/>
+            <rect x="232" y="14" width="30" height="8" rx="2" fill="white" fill-opacity="0.5"/>
+            <rect x="24" y="56" width="110" height="8" rx="2" fill="#1B3A6B"/>
+            <rect x="24" y="72" width="160" height="4" rx="2" fill="#99AABB"/>
+            <rect x="24" y="82" width="130" height="4" rx="2" fill="#99AABB"/>
+            <rect x="24" y="100" width="70" height="22" rx="4" fill="#1B3A6B"/>
+          </svg>
+        </div>
+        <div class="style-info">
+          <div class="style-name">Corporativo / Serio</div>
+          <div class="style-desc">Azules, estructura clara. Transmite confianza y profesionalismo.</div>
+        </div>
+      </div>
+
+      <div class="style-card" data-val="playful">
+        <div class="check-badge"><svg viewBox="0 0 13 10" fill="none"><path d="M1 5L4.5 8.5L12 1" stroke="#0D0D0D" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="style-preview">
+          <svg viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="140" fill="#FFF5F0"/>
+            <circle cx="260" cy="30" r="28" fill="#FFD166" fill-opacity="0.6"/>
+            <circle cx="40" cy="110" r="20" fill="#06D6A0" fill-opacity="0.5"/>
+            <circle cx="200" cy="100" r="14" fill="#EF476F" fill-opacity="0.4"/>
+            <rect x="24" y="32" width="100" height="9" rx="4.5" fill="#FF6B6B"/>
+            <rect x="24" y="50" width="140" height="5" rx="2.5" fill="#333" fill-opacity="0.3"/>
+            <rect x="24" y="62" width="110" height="5" rx="2.5" fill="#333" fill-opacity="0.2"/>
+            <rect x="24" y="84" width="76" height="24" rx="12" fill="#FF6B6B"/>
+            <rect x="110" y="84" width="76" height="24" rx="12" fill="#06D6A0"/>
+          </svg>
+        </div>
+        <div class="style-info">
+          <div class="style-name">Divertido / Colorido</div>
+          <div class="style-desc">Formas redondeadas, colores vivos. Para públicos jóvenes o familias.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="hint" style="margin-top:12px;">Puedes seleccionar hasta 2 estilos.</div>
+  </div>
+
+  <!-- 04 PALETA DE COLOR -->
+  <div class="section" id="sec-4">
+    <div class="section-num">04 — Colores</div>
+    <div class="section-title">¿Qué paleta te atrae?</div>
+    <div class="section-desc">Si ya tienes colores de marca, indícalos abajo. Si no, elige la que más va contigo.</div>
+
+    <div class="palette-grid" id="palette-grid">
+      <div class="palette-option" data-val="neutros">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#F9F9F7;border:1px solid #ddd;"></div>
+          <div class="swatch" style="background:#E5E0D8;"></div>
+          <div class="swatch" style="background:#333333;"></div>
+        </div>
+        <div class="palette-label">Neutros y blancos</div>
+      </div>
+      <div class="palette-option" data-val="azul-marino">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#1B3A6B;"></div>
+          <div class="swatch" style="background:#4B7BE5;"></div>
+          <div class="swatch" style="background:#F0F4FF;"></div>
+        </div>
+        <div class="palette-label">Azules profundos</div>
+      </div>
+      <div class="palette-option" data-val="tierra">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#8B5E3C;"></div>
+          <div class="swatch" style="background:#C9A97A;"></div>
+          <div class="swatch" style="background:#F5ECD7;"></div>
+        </div>
+        <div class="palette-label">Tonos tierra</div>
+      </div>
+      <div class="palette-option" data-val="verde-natural">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#2D6A4F;"></div>
+          <div class="swatch" style="background:#74C69D;"></div>
+          <div class="swatch" style="background:#F0FAF4;"></div>
+        </div>
+        <div class="palette-label">Verdes naturales</div>
+      </div>
+      <div class="palette-option" data-val="oscuro">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#0D0D0D;"></div>
+          <div class="swatch" style="background:#C8F135;"></div>
+          <div class="swatch" style="background:#1E1E1E;"></div>
+        </div>
+        <div class="palette-label">Oscuro con acento</div>
+      </div>
+      <div class="palette-option" data-val="vibrante">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#FF3B00;"></div>
+          <div class="swatch" style="background:#FFEC00;"></div>
+          <div class="swatch" style="background:#0047FF;"></div>
+        </div>
+        <div class="palette-label">Vibrante / Atrevido</div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:14px;">
+      <label>¿Tienes colores específicos de tu marca? (opcional)</label>
+      <input type="text" id="custom-colors" placeholder="ej. Azul marino #1B3A6B, Dorado #C9A97A..." />
+    </div>
+  </div>
+
+  <!-- 05 SERVICIOS / SECCIONES -->
+  <div class="section" id="sec-5">
+    <div class="section-num">05 — Contenido</div>
+    <div class="section-title">¿Qué secciones necesita la página?</div>
+    <div class="section-desc">Marca todo lo que quieres incluir.</div>
+
+    <div class="pill-group" id="sections-group">
+      <div class="pill" data-val="inicio">Inicio / Hero</div>
+      <div class="pill" data-val="nosotros">¿Quiénes somos?</div>
+      <div class="pill" data-val="servicios">Servicios / Productos</div>
+      <div class="pill" data-val="galeria">Galería de fotos</div>
+      <div class="pill" data-val="precios">Precios / Tarifas</div>
+      <div class="pill" data-val="testimonios">Testimonios</div>
+      <div class="pill" data-val="reservas-sec">Reservas / Agenda</div>
+      <div class="pill" data-val="contacto">Contacto / Formulario</div>
+      <div class="pill" data-val="faq">Preguntas frecuentes</div>
+      <div class="pill" data-val="ubicacion">Ubicación / Mapa</div>
+      <div class="pill" data-val="redes">Links a redes sociales</div>
+      <div class="pill" data-val="blog-sec">Blog / Novedades</div>
+    </div>
+  </div>
+
+  <!-- 06 REFERENCIAS -->
+  <div class="section" id="sec-6">
+    <div class="section-num">06 — Inspiración</div>
+    <div class="section-title">¿Tienes páginas de referencia?</div>
+    <div class="section-desc">Pega links de sitios web que te gusten, aunque sea de otra industria. Sirve para entender tu gusto visual.</div>
+
+    <div class="ref-list" id="ref-list">
+      <div class="ref-row">
+        <input type="url" placeholder="https://..." />
+      </div>
+      <div class="ref-row">
+        <input type="url" placeholder="https://..." />
+      </div>
+    </div>
+    <button class="add-ref-btn" onclick="addRefRow()">+ Agregar otra referencia</button>
+
+    <div class="field" style="margin-top:20px;">
+      <label>¿Qué te gusta de esas páginas? (opcional)</label>
+      <textarea id="ref-notes" rows="3" placeholder="ej. Me gusta cómo muestran las fotos, el menú de navegación, los colores..."></textarea>
+    </div>
+  </div>
+
+  <!-- 07 IMÁGENES -->
+  <div class="section" id="sec-7">
+    <div class="section-num">07 — Imágenes y archivos</div>
+    <div class="section-title">Sube lo que tengas</div>
+    <div class="section-desc">Logo, fotos del negocio, imágenes de referencia, paletas de color, capturas de pantalla… lo que creas relevante para el diseño.</div>
+
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" id="file-input" multiple accept="image/*,.pdf,.png,.jpg,.jpeg,.webp,.svg" />
+      <div class="upload-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 14V4M11 4L7.5 7.5M11 4L14.5 7.5" stroke="#C8F135" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 16v1a2 2 0 002 2h12a2 2 0 002-2v-1" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <p><strong>Arrastra archivos aquí</strong> o haz clic para seleccionar</p>
+      <p class="hint">PNG, JPG, SVG, PDF · Máx. 10 archivos · 10 MB por archivo</p>
+    </div>
+
+    <div class="img-preview-grid" id="img-preview-grid"></div>
+    <div class="upload-count" id="upload-count" style="display:none;">
+      <span id="upload-count-num">0</span> archivo(s) listos para enviar
+    </div>
+
+    <div class="field" style="margin-top:16px;">
+      <label>¿Qué representa cada imagen? (opcional)</label>
+      <textarea id="img-notes" rows="2" placeholder="ej. La primera imagen es nuestro logo actual, las otras son fotos de las cabañas..."></textarea>
+    </div>
+  </div>
+
+  <!-- 08 EXTRAS -->
+  <div class="section" id="sec-8">
+    <div class="section-num">08 — Detalles finales</div>
+    <div class="section-title">Un poco más</div>
+    <div class="section-desc">Esto ayuda a planificar el proyecto correctamente.</div>
+
+    <div class="field">
+      <label>¿En cuánto tiempo necesitas el proyecto?</label>
+      <div class="pill-group" id="timeline-group" style="margin-top:8px;">
+        <div class="pill" data-val="urgente">Lo antes posible</div>
+        <div class="pill" data-val="2semanas">1-2 semanas</div>
+        <div class="pill" data-val="1mes">Cerca de 1 mes</div>
+        <div class="pill" data-val="sin-apuro">Sin apuro</div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:20px;">
+      <label>¿Tienes algún presupuesto estimado en mente?</label>
+      <div class="pill-group" id="budget-group" style="margin-top:8px;">
+        <div class="pill" data-val="basico">Hasta $200.000</div>
+        <div class="pill" data-val="intermedio">$200.000 – $500.000</div>
+        <div class="pill" data-val="avanzado">$500.000 – $1.000.000</div>
+        <div class="pill" data-val="abierto">Abierto a cotizar</div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:20px;">
+      <label>¿Algo más que quieras contarme? (opcional)</label>
+      <textarea id="extras" rows="4" placeholder="Dudas, ideas especiales, cosas que definitivamente NO quieres en tu página..."></textarea>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-section">
+    <p>Al enviar este formulario, recibirás una confirmación y nos pondremos en contacto contigo para continuar.</p>
+    <button class="submit-btn" onclick="submitForm()">
+      Enviar cuestionario
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="#0D0D0D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="wrap success-screen" id="success-screen">
+  <div class="success-icon">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M6 14L11 19L22 8" stroke="#C8F135" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <h2>¡Listo, gracias!</h2>
+  <p>Recibí tus respuestas. Te contactaré pronto para hablar del proyecto.</p>
+
+  <div class="result-card" id="result-card">
+    <h3>Resumen de tus respuestas</h3>
+    <div id="result-lines"></div>
+  </div>
+  <button class="copy-result-btn" onclick="copyResult()">Copiar resumen</button>
+</div>
+
+<script>
+  // PILL SELECTION (multi)
+  function initPills(groupId, maxSelect) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    group.querySelectorAll('.pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const selected = group.querySelectorAll('.pill.selected');
+        if (pill.classList.contains('selected')) {
+          pill.classList.remove('selected');
+        } else {
+          if (maxSelect && selected.length >= maxSelect) {
+            selected[0].classList.remove('selected');
+          }
+          pill.classList.add('selected');
+        }
+        updateProgress();
+      });
+    });
+  }
+
+  initPills('page-type', 0);
+  initPills('sections-group', 0);
+  initPills('timeline-group', 1);
+  initPills('budget-group', 1);
+
+  // STYLE CARDS (max 2)
+  document.querySelectorAll('.style-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const selected = document.querySelectorAll('.style-card.selected');
+      if (card.classList.contains('selected')) {
+        card.classList.remove('selected');
+      } else {
+        if (selected.length >= 2) selected[0].classList.remove('selected');
+        card.classList.add('selected');
+      }
+      updateProgress();
+    });
+  });
+
+  // PALETTE (single)
+  document.querySelectorAll('.palette-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.palette-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      updateProgress();
+    });
+  });
+
+  // IMAGE UPLOAD
+  const uploadedFiles = [];
+
+  const zone = document.getElementById('upload-zone');
+  const fileInput = document.getElementById('file-input');
+  const previewGrid = document.getElementById('img-preview-grid');
+  const uploadCount = document.getElementById('upload-count');
+  const uploadCountNum = document.getElementById('upload-count-num');
+
+  fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragging'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragging'));
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    zone.classList.remove('dragging');
+    handleFiles(e.dataTransfer.files);
+  });
+
+  function handleFiles(files) {
+    Array.from(files).forEach(file => {
+      if (uploadedFiles.length >= 10) return;
+      if (file.size > 10 * 1024 * 1024) { alert(`"${file.name}" supera los 10 MB.`); return; }
+      if (uploadedFiles.find(f => f.name === file.name && f.size === file.size)) return;
+      uploadedFiles.push(file);
+      renderThumb(file, uploadedFiles.length - 1);
+    });
+    updateUploadCount();
+  }
+
+  function renderThumb(file, index) {
+    const thumb = document.createElement('div');
+    thumb.className = 'img-thumb';
+    thumb.dataset.index = index;
+
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        thumb.innerHTML = `
+          <img src="${e.target.result}" alt="${file.name}" />
+          <div class="img-label">${file.name}</div>
+          <button class="remove-img" onclick="removeFile(${index})" title="Eliminar">×</button>
+        `;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      thumb.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;padding:8px;">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="2" width="16" height="22" rx="2" fill="#333"/><path d="M16 2l6 6H16V2z" fill="#555"/><rect x="8" y="12" width="8" height="1.5" rx="0.75" fill="#888"/><rect x="8" y="15.5" width="6" height="1.5" rx="0.75" fill="#666"/></svg>
+          <span style="font-size:10px;color:#888;text-align:center;word-break:break-all;">${file.name}</span>
+        </div>
+        <button class="remove-img" onclick="removeFile(${index})" title="Eliminar">×</button>
+      `;
+    }
+
+    previewGrid.appendChild(thumb);
+  }
+
+  function removeFile(index) {
+    uploadedFiles.splice(index, 1);
+    previewGrid.innerHTML = '';
+    uploadedFiles.forEach((f, i) => renderThumb(f, i));
+    updateUploadCount();
+  }
+
+  function updateUploadCount() {
+    if (uploadedFiles.length > 0) {
+      uploadCount.style.display = 'block';
+      uploadCountNum.textContent = uploadedFiles.length;
+    } else {
+      uploadCount.style.display = 'none';
+    }
+    updateProgress();
+  }
+
+  // ADD REF ROW
+  function addRefRow() {
+    const list = document.getElementById('ref-list');
+    const row = document.createElement('div');
+    row.className = 'ref-row';
+    row.innerHTML = '<input type="url" placeholder="https://..." />';
+    list.appendChild(row);
+  }
+
+  // PROGRESS
+  function updateProgress() {
+    const checks = [
+      !!document.getElementById('biz-name').value.trim(),
+      !!document.getElementById('biz-desc').value.trim(),
+      document.querySelectorAll('#page-type .pill.selected').length > 0,
+      document.querySelectorAll('.style-card.selected').length > 0,
+      document.querySelectorAll('.palette-option.selected').length > 0,
+      document.querySelectorAll('#sections-group .pill.selected').length > 0,
+      document.querySelectorAll('#timeline-group .pill.selected').length > 0,
+    ];
+    const done = checks.filter(Boolean).length;
+    const pct = Math.round((done / checks.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+    const labels = ['Comenzando...', 'Vamos bien...', 'Más de la mitad', 'Casi listo', 'Listo para enviar'];
+    document.getElementById('progress-label').textContent = labels[Math.floor(pct / 25)] || 'Listo para enviar';
+  }
+
+  document.getElementById('biz-name').addEventListener('input', updateProgress);
+  document.getElementById('biz-desc').addEventListener('input', updateProgress);
+
+  // SUBMIT
+  function getSelected(groupId) {
+    return Array.from(document.querySelectorAll('#' + groupId + ' .pill.selected')).map(p => p.textContent).join(', ');
+  }
+
+  function submitForm() {
+    const name = document.getElementById('biz-name').value.trim();
+    if (!name) { alert('Por favor ingresa el nombre de tu negocio.'); return; }
+
+    const refs = Array.from(document.querySelectorAll('#ref-list input')).map(i => i.value.trim()).filter(Boolean);
+
+    const data = {
+      'Negocio': name,
+      'Descripción': document.getElementById('biz-desc').value.trim() || '—',
+      'Público objetivo': document.getElementById('biz-audience').value.trim() || '—',
+      'Tipo de página': getSelected('page-type') || '—',
+      'Estilo visual': Array.from(document.querySelectorAll('.style-card.selected')).map(c => c.querySelector('.style-name').textContent).join(', ') || '—',
+      'Paleta de color': document.querySelector('.palette-option.selected')?.querySelector('.palette-label')?.textContent || '—',
+      'Colores de marca': document.getElementById('custom-colors').value.trim() || '—',
+      'Secciones': getSelected('sections-group') || '—',
+      'Referencias': refs.length ? refs.join(' | ') : '—',
+      'Notas de referencia': document.getElementById('ref-notes').value.trim() || '—',
+      'Plazo': getSelected('timeline-group') || '—',
+      'Presupuesto': getSelected('budget-group') || '—',
+      'Imágenes subidas': uploadedFiles.length ? uploadedFiles.map(f => f.name).join(', ') : '—',
+      'Notas sobre imágenes': document.getElementById('img-notes').value.trim() || '—',
+      'Comentarios extra': document.getElementById('extras').value.trim() || '—',
+    };
+
+    const lines = document.getElementById('result-lines');
+    lines.innerHTML = '';
+    for (const [k, v] of Object.entries(data)) {
+      const div = document.createElement('div');
+      div.className = 'result-line';
+      div.innerHTML = `<span class="rl">${k}</span><span class="rv">${v}</span>`;
+      lines.appendChild(div);
+    }
+
+    document.getElementById('main-form').style.display = 'none';
+    document.getElementById('success-screen').classList.add('visible');
+
+    // Show image thumbnails in success screen
+    if (uploadedFiles.length > 0) {
+      const imgGrid = document.createElement('div');
+      imgGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:16px;';
+      uploadedFiles.forEach(file => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.08);';
+            imgGrid.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      document.getElementById('result-card').appendChild(imgGrid);
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function copyResult() {
+    const lines = document.querySelectorAll('.result-line');
+    let text = '=== CUESTIONARIO DE DISEÑO ===\n\n';
+    lines.forEach(l => {
+      const label = l.querySelector('.rl').textContent;
+      const val = l.querySelector('.rv').textContent;
+      text += `${label}: ${val}\n`;
+    });
+    navigator.clipboard.writeText(text).catch(() => {});
+    const btn = document.querySelector('.copy-result-btn');
+    btn.textContent = '¡Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar resumen', 2000);
+  }
+</script>
+</body>
+</html>
